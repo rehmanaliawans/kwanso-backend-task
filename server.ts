@@ -9,7 +9,7 @@ import { Request, Response, NextFunction } from "express";
 const express = require("express");
 const Router = require("./router/index");
 const morgan = require("morgan");
-const AppError = require("./utils/appError");
+
 const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
 const mongoSanitize = require("express-mongo-sanitize");
@@ -52,7 +52,9 @@ app.use(hpp());
 app.use("/", Router);
 
 app.all("*", (req: Request, res: Response, next: NextFunction) => {
-  next(new AppError(`Can't find ${req.originalUrl} on the server!`, 404));
+  res
+    .status(404)
+    .json({ error: `Can't find ${req.originalUrl} on the server!` });
 });
 
 connectDB();
